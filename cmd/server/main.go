@@ -20,6 +20,26 @@ func main() {
 		log.Fatalf("failed to load config: %v", err)
 	}
 
+	log.Printf(
+		"Config loaded: port=%q weather_api_key_set=%t weather_api_url=%q via_cep_url=%q",
+		cfg.Port,
+		cfg.WeatherAPIKey != "",
+		cfg.WeatherAPIURL,
+		cfg.ViaCEPURL,
+	)
+	if cfg.WeatherAPIKey == "" {
+		log.Printf("WARNING: WEATHER_API_KEY is empty")
+	}
+	if cfg.WeatherAPIURL == "" {
+		log.Printf("WARNING: WEATHER_API_URL is empty")
+	}
+	if cfg.ViaCEPURL == "" {
+		log.Printf("WARNING: VIA_CEP_URL is empty")
+	}
+	if cfg.Port == "" {
+		log.Printf("WARNING: PORT is empty")
+	}
+
 	// Initialize the router
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)

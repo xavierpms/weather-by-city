@@ -3,6 +3,7 @@ package repository
 import (
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 
@@ -38,16 +39,20 @@ func (r *TemperatureRepository) GetTemperatureByCityName(cityName string) (*doma
 
 	// Build the URL with parameters
 	requestURL := r.apiURL + "?q=" + encodedCityName + "&lang=pt&country=Brazil&key=" + r.apiKey
+	log.Printf("calling Weather API: base_url=%s city=%s", requestURL, cityName)
 
 	// Make the request
 	resp, err := http.Get(requestURL)
 	if err != nil {
+		log.Printf("Weather API request error: city=%s err=%v", cityName, err)
 		return nil, err
 	}
 	defer resp.Body.Close()
+	log.Printf("Weather API response: city=%s status=%d", cityName, resp.StatusCode)
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Printf("Weather API read response error: city=%s err=%v", cityName, err)
 		return nil, err
 	}
 
@@ -55,11 +60,13 @@ func (r *TemperatureRepository) GetTemperatureByCityName(cityName string) (*doma
 	var weatherResp WeatherAPIResponse
 	err = json.Unmarshal(body, &weatherResp)
 	if err != nil {
+		log.Printf("Weather API parse response error: city=%s err=%v", cityName, err)
 		return nil, err
 	}
 
 	// Calculate the temperature in Kelvin
 	kelvin := weatherResp.Current.TempC + 273.0
+	log.Printf("Weather API request succeeded: city=%s temp_c=%.2f", cityName, weatherResp.Current.TempC)
 
 	return &domain.Temperature{
 		Celsius:    weatherResp.Current.TempC,

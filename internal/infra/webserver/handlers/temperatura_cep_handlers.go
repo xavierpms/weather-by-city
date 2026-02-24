@@ -52,23 +52,23 @@ func (h *TemperatureHandler) handleError(w http.ResponseWriter, err error) {
 
 	switch err {
 	case domain.ErrInvalidCEPFormat:
-		log.Printf("invalid zipcode: %v", err)
+		log.Printf("Invalid zipcode: %v", err)
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		json.NewEncoder(w).Encode(ErrorResponse{Message: "invalid zipcode"})
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "Invalid zipcode"})
 
 	case domain.ErrCEPNotFound:
 		log.Printf("CEP not found: %v", err)
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(ErrorResponse{Message: "can not find zipcode"})
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "Cannot find zipcode"})
 
 	case domain.ErrTemperatureNotFound:
-		log.Printf("temperature not found: %v", err)
+		log.Printf("Temperature not found: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(ErrorResponse{Message: "can not fetch temperature"})
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "Cannot fetch temperature"})
 
 	default:
-		log.Printf("internal error: %v", err)
+		log.Printf("Internal error: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(ErrorResponse{Message: "internal server error"})
+		json.NewEncoder(w).Encode(ErrorResponse{Message: "Internal server error"})
 	}
 }
