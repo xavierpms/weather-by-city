@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/xavierpms/weather-by-city/internal/domain"
@@ -40,16 +41,20 @@ func NewCEPRepository(apiURL string) domain.CEPRepository {
 func (r *CEPRepositoryImpl) GetCEPData(cep string) (*domain.CEPData, error) {
 	// Build the URL
 	requestURL := r.apiURL + "/" + cep + "/json/"
+	log.Printf("calling ViaCEP API: url=%s cep=%s", requestURL, cep)
 
 	// Make the request
 	resp, err := http.Get(requestURL)
 	if err != nil {
+		log.Printf("ViaCEP API request error: cep=%s err=%v", cep, err)
 		return nil, err
 	}
 	defer resp.Body.Close()
+	log.Printf("ViaCEP API response: cep=%s status=%d", cep, resp.StatusCode)
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Printf("ViaCEP API read response error: cep=%s err=%v", cep, err)
 		return nil, err
 	}
 
@@ -57,13 +62,16 @@ func (r *CEPRepositoryImpl) GetCEPData(cep string) (*domain.CEPData, error) {
 	var viaCepData ViaCEPResponse
 	err = json.Unmarshal(body, &viaCepData)
 	if err != nil {
+		log.Printf("ViaCEP API parse response error: cep=%s err=%v", cep, err)
 		return nil, err
 	}
 
 	// Validate if the CEP was found
 	if viaCepData.Erro {
+		log.Printf("ViaCEP API returned not found: cep=%s", cep)
 		return nil, errors.New("CEP not found in ViaCEP")
 	}
+	log.Printf("ViaCEP API request succeeded: cep=%s city=%s", cep, viaCepData.Localidade)
 
 	return &domain.CEPData{
 		CEP:    viaCepData.CEP,
