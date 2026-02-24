@@ -3,6 +3,7 @@ module github.com/xavierpms/weather-by-city
 go 1.25.5
 
 require (
+	github.com/go-chi/chi v1.5.5
 	github.com/joho/godotenv v1.5.1
 	github.com/stretchr/testify v1.11.1
 )
