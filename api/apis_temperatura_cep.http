@@ -1,0 +1,21 @@
+###
+# Local tests for the endpoint GET /{cep}
+# Valid CEP. Should return status code 200 and the response body
+# in the format: { "temp_C": 28.5, "temp_F": 28.5, "temp_K": 28.5 }
+GET http://localhost:8080/32450000
+
+###
+
+# Valid CEP with special character and space (São Paulo). Should return status code 200 and the response body
+# in the format: { "temp_C": 28.5, "temp_F": 28.5, "temp_K": 28.5 }
+GET http://localhost:8080/01021200
+
+###
+# Invalid CEP (incorrect format). Should return status code 422 
+# and the message "Invalid zipcode"
+GET http://localhost:8080/324500000
+
+###
+# Valid CEP format, but not found. Should return status code 404 
+# and the message "Can not find zipcode"
+GET http://localhost:8080/00000000
