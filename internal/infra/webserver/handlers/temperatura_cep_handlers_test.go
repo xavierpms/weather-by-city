@@ -72,7 +72,7 @@ func TestGetTemperatureByCEPInvalidFormat(t *testing.T) {
 	var errResponse ErrorResponse
 	err := json.Unmarshal(w.Body.Bytes(), &errResponse)
 	assert.NoError(t, err)
-	assert.Equal(t, "invalid zipcode", errResponse.Message)
+	assert.Equal(t, "Invalid zipcode", errResponse.Message)
 }
 
 // TestGetTemperatureByCEPNotFound tests the case when the CEP is not found
@@ -97,7 +97,7 @@ func TestGetTemperatureByCEPNotFound(t *testing.T) {
 	var errResponse ErrorResponse
 	err := json.Unmarshal(w.Body.Bytes(), &errResponse)
 	assert.NoError(t, err)
-	assert.Equal(t, "can not find zipcode", errResponse.Message)
+	assert.Equal(t, "Cannot find zipcode", errResponse.Message)
 }
 
 // TestGetTemperatureByCEPTemperatureNotFound tests the case when the temperature is not found
@@ -122,5 +122,5 @@ func TestGetTemperatureByCEPTemperatureNotFound(t *testing.T) {
 	var errResponse ErrorResponse
 	err := json.Unmarshal(w.Body.Bytes(), &errResponse)
 	assert.NoError(t, err)
-	assert.Equal(t, "can not fetch temperature", errResponse.Message)
+	assert.Equal(t, "Cannot fetch temperature", errResponse.Message)
 }
