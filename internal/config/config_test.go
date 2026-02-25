@@ -66,33 +66,21 @@ func TestLoadDotEnvFromParentDirectory(t *testing.T) {
 	}
 }
 
-func TestLoadConfigUsesWeatherAPIKeyFromFile(t *testing.T) {
-	secretFile := filepath.Join(t.TempDir(), "weather_api_key")
-	if err := os.WriteFile(secretFile, []byte("file_secret_key\n"), 0o644); err != nil {
-		t.Fatalf("failed to create secret file: %v", err)
-	}
-
+func TestLoadConfigUsesDefaultWeatherAPIKeyWhenMissingOrEmpty(t *testing.T) {
 	t.Setenv("WEATHER_API_KEY", "")
-	t.Setenv("WEATHER_API_KEY_FILE", secretFile)
 
 	cfg, err := LoadConfig()
 	if err != nil {
 		t.Fatalf("LoadConfig returned an error: %v", err)
 	}
 
-	if cfg.WeatherAPIKey != "file_secret_key" {
-		t.Fatalf("expected WeatherAPIKey loaded from file, got %q", cfg.WeatherAPIKey)
+	if cfg.WeatherAPIKey != defaultWeatherAPIKey {
+		t.Fatalf("expected default WeatherAPIKey %q, got %q", defaultWeatherAPIKey, cfg.WeatherAPIKey)
 	}
 }
 
-func TestLoadConfigPrefersWeatherAPIKeyEnvOverFile(t *testing.T) {
-	secretFile := filepath.Join(t.TempDir(), "weather_api_key")
-	if err := os.WriteFile(secretFile, []byte("file_secret_key\n"), 0o644); err != nil {
-		t.Fatalf("failed to create secret file: %v", err)
-	}
-
+func TestLoadConfigPrefersWeatherAPIKeyEnv(t *testing.T) {
 	t.Setenv("WEATHER_API_KEY", "env_secret_key")
-	t.Setenv("WEATHER_API_KEY_FILE", secretFile)
 
 	cfg, err := LoadConfig()
 	if err != nil {
